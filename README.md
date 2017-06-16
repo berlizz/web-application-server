@@ -25,7 +25,10 @@
 * 파싱한 데이터로 model.User 클래스에 저장
 
 ### 요구사항 3 - post 방식으로 회원가입
-* 
+* 요청경로는 /user/create
+* POST 전송 방식일 떄 데이터는 HTTP Body에 있음. Body은 HTTP Header의 끝을 알리는 공백라인의 다음줄
+* HTTP Body에 전달되는 데이터는 GET 방식으로 데이터를 전달할 때의 이름=값 과 같음
+* HTTP Body는 util.IOUtils 클래스 사용하여 읽은 후 데이터로 model.User 객체 생성
 
 ### 요구사항 4 - redirect 방식으로 이동
 * 
