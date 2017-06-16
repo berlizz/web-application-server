@@ -20,7 +20,9 @@
 * 요청한 경로에 해당하는 파일을 Files를 이용하여  byte[]배열로 읽은 후 저장
 
 ### 요구사항 2 - get 방식으로 회원가입
-* 
+* 요청 경로는 /user/create?userId=test&password=pw&name=kim&email=kim@kim.com
+* HTTP header의 첫번째 라인에서 url을 추출한 후 유저 정보에 해당하는 파라미터 파싱(util.HttpRequestUtils 클래스 사용)
+* 파싱한 데이터로 model.User 클래스에 저장
 
 ### 요구사항 3 - post 방식으로 회원가입
 * 

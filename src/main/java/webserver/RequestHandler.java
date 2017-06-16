@@ -9,9 +9,13 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import model.User;
+import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
@@ -33,7 +37,18 @@ public class RequestHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "Hello World".getBytes();
             
-            String line = reader.readLine();
+            body = readHeader(reader, body);
+            
+            response200Header(dos, body.length);
+            responseBody(dos, body);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+    
+    private byte[] readHeader(BufferedReader reader, byte[] body) {
+    	try {
+			String line = reader.readLine();
 			String[] strArr = new String[line.length()];
 			if(line != null) {
 				strArr = line.split(" ");
@@ -41,6 +56,9 @@ public class RequestHandler extends Thread {
 			
 			while(!line.equals("")) {
 				if(!strArr[1].equals("/")) {
+					if(strArr[1].contains("/user/create")) {
+						strArr[1] = signUp(strArr[1]);
+					}
 					String filePath = "./webapp";
 			    	body = Files.readAllBytes(Paths.get(filePath + strArr[1]));
 				}
@@ -50,12 +68,26 @@ public class RequestHandler extends Thread {
 					break;
 				}
 			}
-            
-            response200Header(dos, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+			
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+    	
+    	return body;
+    	
+    }
+    
+    private String signUp(String signUpUrl) {
+    	int index = signUpUrl.indexOf("?");
+    	String path = signUpUrl.substring(0, index);
+    	String userData = signUpUrl.substring(index + 1);
+    	
+    	Map<String, String> map = HttpRequestUtils.parseQueryString(userData);
+    	User newUser = new User(map.get("userId"), map.get("password"), map.get("name"), map.get("email"));
+
+    	log.info(newUser.toString());
+    	
+    	return path;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
