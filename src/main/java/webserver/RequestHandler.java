@@ -40,7 +40,12 @@ public class RequestHandler extends Thread {
             
             body = readHeader(reader, body);
             
-            response200Header(dos, body.length);
+            if(body != null) {
+            	response200Header(dos, body.length);
+            } else {
+            	response302Header(dos);
+            }
+            
             responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -118,7 +123,8 @@ public class RequestHandler extends Thread {
     		String userData = IOUtils.readData(reader, contentLength);
     		signUpPOST(userData);
     		
-    		body = Files.readAllBytes(Paths.get("./webapp/index.html"));
+    		//body = Files.readAllBytes(Paths.get("./webapp/index.html"));
+    		body = null;
 			
 		} catch (IOException e) {
 			log.error(e.getMessage());
@@ -157,10 +163,22 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
+    
+    private void response302Header(DataOutputStream dos) {
+    	try {
+			dos.writeBytes("HTTP/1.1 302 Found \r\n");
+			dos.writeBytes("Location: http://localhost:8080/index.html\r\n");
+			dos.writeBytes("\r\n");
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+    }
 
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
-            dos.write(body, 0, body.length);
+        	if(body != null) {
+        		dos.write(body, 0, body.length);
+        	}
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());

@@ -31,7 +31,7 @@
 * HTTP Body는 util.IOUtils 클래스 사용하여 읽은 후 데이터로 model.User 객체 생성
 
 ### 요구사항 4 - redirect 방식으로 이동
-* 
+* DataOutputStream에 HTTP 302 Header 내용 작성
 
 ### 요구사항 5 - cookie
 * 
